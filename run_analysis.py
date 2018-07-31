@@ -12,10 +12,17 @@ if __name__ == "__main__":
         df = pd.read_csv(f, delimiter="\t", index_col=0,
                          dtype={'Sentence #': int})
 
+    # remove space in col name
+    df.rename(columns={'Sentence #': 'Sentence_#'}, inplace=True)
+
+    # convert data to strings
+    df['Word'] = df.Word.apply(str)
+    df['POS'] = df.POS.apply(str)
+
     # fit model, obtain results
     results = fit_validate_hmm(df,
                                y_col='Tag',
-                               seq_id_col='Sentence #',
+                               seq_id_col='Sentence_#',
                                feature_cols=['Word', 'POS'])
 
     # save scores to json file
