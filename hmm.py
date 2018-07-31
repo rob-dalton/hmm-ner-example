@@ -1,13 +1,18 @@
+import typing
+from typing import List
+
 import numpy as np
 import pandas as pd
 
 from seqlearn.hmm import MultinomialHMM
-from sklearn import preprocessing as pp
 from sklearn.model_selection import KFold
 
-from metrics import get_accuracy_metrics, avg_k_scores
+from sklearn import preprocessing as pp
 
-def add_one_hot_vectors(df_tokens, features):
+from metrics import get_accuracy_metrics, avg_k_scores
+from etc.types import DataFrame, Series
+
+def add_one_hot_vectors(df_tokens: DataFrame, features: List[str]) -> None:
     '''One hot encode features from df. Add column for encoded vectors.'''
 
     # create one hot encoder
@@ -24,8 +29,8 @@ def add_one_hot_vectors(df_tokens, features):
     df_tokens['one_hot_vector'] = df_tokens.one_hot_vector.apply(lambda x: x[0])
 
 
-def get_sequence_lengths(df_tokens, seq_id_col):
-    '''create df of sequence lengths'''
+def get_sequence_lengths(df_tokens: DataFrame, seq_id_col: str) -> DataFrame:
+    ''' Create DataFrame of sequence lengths '''
 
     # get non-sequence id column name for count
     count_cols = set(df_tokens.columns.values)
@@ -37,7 +42,8 @@ def get_sequence_lengths(df_tokens, seq_id_col):
                                              .rename(columns={count_col: 'length'})\
                                              .copy()
 
-def get_validated_scores(model, df_tokens, y_col, seq_id_col, df_lengths, k):
+def get_validated_scores(model, df_tokens: DataFrame, y_col: str,
+                         seq_id_col: str, df_lengths: DataFrame, k: int) -> dict:
     '''Use k-fold cross validation to fit model on k folds of data. Collect and average scores.'''
 
     # create fold splittersdf 3
@@ -84,8 +90,9 @@ def get_validated_scores(model, df_tokens, y_col, seq_id_col, df_lengths, k):
 
     return k_scores
 
-def fit_validate_hmm(df, y_col, seq_id_col, feature_cols, k=10):
-    '''Fit HMM using features on sequence of tokens df_tokens from sequences seq_id_col.'''
+def fit_validate_hmm(df: DataFrame, y_col: str, seq_id_col: str, feature_cols: List[str],
+                     k: int = 10) -> dict:
+    ''' Fit HMM using features on sequence of tokens df_tokens from sequences seq_id_col. '''
     df_tokens = df.copy()
 
     # add one hot vectors encoded from features
