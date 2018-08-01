@@ -19,11 +19,36 @@ if __name__ == "__main__":
     df['Word'] = df.Word.apply(str)
     df['POS'] = df.POS.apply(str)
 
+    # get word positions
+    positions = []
+    pos = 0
+    current_sent = 1
+    for sent_num in df['Sentence_#']:
+        if current_sent == sent_num:
+            pos += 1
+        else:
+            pos = 1
+            current_sent = sent_num
+        positions.append(pos)
+
+    df['Position'] = positions
+
+    # add capitalized feature
+    df['Capitalized'] = df.apply(lambda x: x['Word'].istitle() and x['Position'] != 1, axis=1)
+
     # fit model, obtain results
-    results = fit_validate_hmm(df,
-                               y_col='Tag',
-                               seq_id_col='Sentence_#',
-                               feature_cols=['Word', 'POS'])
+    models = {
+                'unigram': ['Word', 'POS'],
+                'unigram_capitalized': ['Word', 'POS', 'Capitalized'],
+                'unigram_capitalized_position': ['Word', 'POS', 'Capitalized',
+                                                 'Position']
+             }
+    results = {}
+    for model, features in models.items():
+        results[model] = fit_validate_hmm(df,
+                                          y_col='Tag',
+                                          seq_id_col='Sentence_#',
+                                          feature_cols=features)
 
     # save scores to json file
     with open('scores.json', 'w') as f:
