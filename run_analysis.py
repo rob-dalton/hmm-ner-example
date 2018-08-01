@@ -31,7 +31,7 @@ if __name__ == "__main__":
 
     # save file to s3
     s3 = boto3.resource('s3')
-    bucket = s3.Bucket('awspot-instance')
+    bucket = s3.Bucket('awspot-instances')
 
     with open('scores.json', 'rb') as data:
-        bucket.put_object(Key='scores.json', Body=data)
+        bucket.put_object(Key='hmm_example/scores.json', Body=data)
