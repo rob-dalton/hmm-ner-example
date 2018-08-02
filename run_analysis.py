@@ -7,6 +7,7 @@ import pandas as pd
 from hmm import fit_validate_hmm
 
 if __name__ == "__main__":
+
     # load data
     with open('dataset_05-22-2018.txt', errors='ignore') as f:
         df = pd.read_csv(f, delimiter="\t", index_col=0,
@@ -34,7 +35,16 @@ if __name__ == "__main__":
     df['Position'] = positions
 
     # add capitalized feature
-    df['Capitalized'] = df.apply(lambda x: x['Word'].istitle() and x['Position'] != 1, axis=1)
+    # NOTE: All feature values must be same type for vector encoding.
+    #       This is why Capitalized is a str, not a bool.
+    def is_capitalized(row):
+        if row['Word'].istitle() and row['Position'] != 1:
+            return 'y'
+        return 'n'
+    df['Capitalized'] = df.apply(is_capitalized, axis=1)
+
+    # convert Position to string
+    df['Position'] = df['Position'].apply(str)
 
     # fit model, obtain results
     models = {
