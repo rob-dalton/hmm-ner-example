@@ -55,10 +55,12 @@ if __name__ == "__main__":
              }
     results = {}
     for model, features in models.items():
-        results[model] = fit_validate_hmm(df,
-                                          y_col='Tag',
-                                          seq_id_col='Sentence_#',
-                                          feature_cols=features)
+        for alpha in [0.01, 0.05, 0.1, 0.15, 0.2, 0.25]:
+            results[alpha][model] = fit_validate_hmm(df,
+                                              y_col='Tag',
+                                              seq_id_col='Sentence_#',
+                                              feature_cols=features,
+                                              alpha=alpha)
 
     # save scores to json file
     scores = {k: v['k_scores'] for k,v in results.items()}
