@@ -51,8 +51,9 @@ if __name__ == "__main__":
                                           feature_cols=features)
 
     # save scores to json file
+    scores = {k: v['k_scores'] for k,v in results.items()}
     with open('scores.json', 'w') as f:
-        json.dump(results['k_scores'], f)
+        json.dump(scores, f)
 
     # save file to s3
     s3 = boto3.resource('s3')
