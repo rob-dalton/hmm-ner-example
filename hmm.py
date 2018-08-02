@@ -90,8 +90,8 @@ def get_validated_scores(model, df_tokens: DataFrame, y_col: str,
 
     return k_scores
 
-def fit_validate_hmm(df: DataFrame, y_col: str, seq_id_col: str, feature_cols: List[str],
-                     k: int = 10) -> dict:
+def fit_validate_hmm(df: DataFrame, y_col: str, seq_id_col: str,
+                     feature_cols: List[str], k: int = 10, alpha: int = 0.01) -> dict:
     ''' Fit HMM using features on sequence of tokens df_tokens from sequences seq_id_col. '''
     df_tokens = df.copy()
 
@@ -102,7 +102,7 @@ def fit_validate_hmm(df: DataFrame, y_col: str, seq_id_col: str, feature_cols: L
     df_lengths = get_sequence_lengths(df_tokens, seq_id_col)
 
     # cross validate model
-    model = MultinomialHMM()
+    model = MultinomialHMM(alpha=alpha)
 
     # get cross validated scores
     k_scores = get_validated_scores(model, df_tokens, y_col, seq_id_col, df_lengths, k)

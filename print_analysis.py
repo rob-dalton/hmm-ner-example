@@ -14,4 +14,6 @@ if __name__ == "__main__":
 
     scores = json.loads(contents)
 
-    print_scores(scores['avg'])
+    for model, model_scores in scores.items():
+        print(model.upper())
+        print_scores(model_scores['avg'])
