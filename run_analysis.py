@@ -53,17 +53,19 @@ if __name__ == "__main__":
                 'unigram_capitalized_position': ['Word', 'POS', 'Capitalized',
                                                  'Position']
              }
-    results = {}
+
+    scores = {}
     for model, features in models.items():
+        scores[model] = {}
         for alpha in [0.01, 0.05, 0.1, 0.15, 0.2, 0.25]:
-            results[alpha][model] = fit_validate_hmm(df,
-                                              y_col='Tag',
-                                              seq_id_col='Sentence_#',
-                                              feature_cols=features,
-                                              alpha=alpha)
+            results = fit_validate_hmm(df,
+                                       y_col='Tag',
+                                       seq_id_col='Sentence_#',
+                                       feature_cols=features,
+                                       alpha=alpha)
+            scores[model][alpha] = results['k_scores']
 
     # save scores to json file
-    scores = {k: v['k_scores'] for k,v in results.items()}
     with open('scores.json', 'w') as f:
         json.dump(scores, f)
 
