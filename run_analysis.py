@@ -20,6 +20,9 @@ if __name__ == "__main__":
     df['Word'] = df.Word.apply(str)
     df['POS'] = df.POS.apply(str)
 
+    # drop Tag prefixes
+    df['Tag'] = df.Tag.apply(lambda tag: tag[2:] if '-' in tag else tag)
+
     # get word positions
     positions = []
     pos = 0
@@ -63,7 +66,7 @@ if __name__ == "__main__":
                                        seq_id_col='Sentence_#',
                                        feature_cols=features,
                                        alpha=alpha)
-            scores[model][alpha] = results['k_scores']
+            scores[alpha][model] = results['k_scores']['avg']
 
     # save scores to json file
     with open('scores.json', 'w') as f:
